@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Todo Demo</title>
+	<link rel="stylesheet" type="text/css" href="/assets/css/bulma.min.css">
+	<link rel="stylesheet" type="text/css" href="/assets/css/style.css">
+	<link rel="stylesheet" type="text/css" href="/assets/fonts/materialdesignicons.min.css">
+</head>
+<body>
+
+	<div class="columns is-centered">
+		<div class="column is-half">
+
+			<hr>
+
+			<h1 class="title">Current Todos:</h1>
+
+			<hr>
+
+			<div class="level">
+				<div class="level-left">
+					<div class="level-item">
+						<label class="checkbox"><input type="checkbox"></label>
+					</div>
+
+					<div class="leve-item">
+						<input class="input is-static is-medium" type="text" placeholder="Todo" value="First todo">
+					</div>	
+				</div>	
+
+				<div class="level-right">
+
+					<div class="level-item">
+						<button class="button is-danger is-small"><span class="icon"><i class="mdi mdi-18px mdi-close"></i></span></button>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="level">
+				<div class="level-left">
+					<div class="level-item">
+						<label class="checkbox"><input type="checkbox"></label>
+					</div>
+
+					<div class="leve-item">
+						<input class="input is-static is-medium" type="text" placeholder="Todo" value="Second todo">
+					</div>	
+				</div>	
+
+				<div class="level-right">
+
+					<div class="level-item">
+						<button class="button is-danger is-small"><span class="icon"><i class="mdi mdi-18px mdi-close"></i></span></button>
+					</div>
+				</div>
+
+			</div>
+
+			<hr>
+
+			<div class="level">
+				<div class="level-left">
+
+					<div class="leve-item">
+						<input class="input is-medium" type="text" placeholder="New Todo">
+					</div>	
+				</div>	
+
+				<div class="level-right">
+
+					<div class="level-item">
+						<button class="button is-success is-medium">
+							<span class="icon">
+								<i class="mdi mdi-24px mdi-plus"></i>
+							</span>
+							<span>Create</span>
+						</button>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+
+	<script src="/assets/js/vue.js"></script>
+	<script src="/assets/js/app.js"></script>
+
+</body>
+</html>
