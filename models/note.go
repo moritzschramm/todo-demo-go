@@ -7,19 +7,21 @@ import (
 
 const (
 	TABLE = "notes"
+	SQL_FALSE = "\x00"
 )
 
 type Note struct {
 	DB *sql.DB 				`json:"-"`
 	ID int 					`json:"id"`
 	Note string 			`json:"note"`
+	Done bool				`json:"done"`
 	Created_at time.Time 	`json:"created_at,omitempty"`
 	Updated_at time.Time 	`json:"updated_at,omitempty"`
 }
 
 func Notes(db *sql.DB) ([]*Note, error) {
 
-	rows, err := db.Query("SELECT id, note, created_at, updated_at FROM "+TABLE)
+	rows, err := db.Query("SELECT id, note, done, created_at, updated_at FROM "+TABLE)
 	if err != nil {
 		return nil, err
 	}
@@ -31,12 +33,13 @@ func Notes(db *sql.DB) ([]*Note, error) {
 	for rows.Next() {
 		var id int
         var note string
+        var done string
         var created_at, updated_at time.Time
-        if err := rows.Scan(&id, &note, &created_at, &updated_at); err != nil {
+        if err := rows.Scan(&id, &note, &done, &created_at, &updated_at); err != nil {
         	return nil, err
         }
 
-        notes[i] = &Note{DB: db, ID: id, Note: note, Created_at: created_at, Updated_at: updated_at}
+        notes[i] = &Note{DB: db, ID: id, Note: note, Done: done != SQL_FALSE, Created_at: created_at, Updated_at: updated_at}
         i++
 	}
 
@@ -46,19 +49,20 @@ func Notes(db *sql.DB) ([]*Note, error) {
 func FindNoteById(db *sql.DB, id int) (*Note, error) {
 
 	var note string
+	var done string
 	var created_at, updated_at time.Time
-	err := db.QueryRow("SELECT note, created_at, updated_at FROM "+TABLE+" WHERE id = ?", id).Scan(&note, &created_at, &updated_at)
+	err := db.QueryRow("SELECT note, done, created_at, updated_at FROM "+TABLE+" WHERE id = ?", id).Scan(&note, &done, &created_at, &updated_at)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Note{DB: db, ID: id, Note: note, Created_at: created_at, Updated_at: updated_at}, nil
+	return &Note{DB: db, ID: id, Note: note, Done: done != SQL_FALSE, Created_at: created_at, Updated_at: updated_at}, nil
 }
 
 func CreateNote(db *sql.DB, note string) (*Note, error) {
 
 	created_at := time.Now();
-	_, err := db.Query("INSERT INTO "+TABLE+" (note, created_at, updated_at) VALUES (?, ?, ?)", note, created_at, created_at)
+	_, err := db.Query("INSERT INTO "+TABLE+" (note, done, created_at, updated_at) VALUES (?, false, ?, ?)", note, created_at, created_at)
 	if err != nil {
 		return nil, err
 	}
@@ -69,14 +73,15 @@ func CreateNote(db *sql.DB, note string) (*Note, error) {
 		return nil, err
 	}
 
-	return &Note{DB: db, ID: id, Note: note, Created_at: created_at, Updated_at: created_at}, nil
+	return &Note{DB: db, ID: id, Note: note, Done: false, Created_at: created_at, Updated_at: created_at}, nil
 }
 
-func (n *Note) Edit(note string) error {
+func (n *Note) Edit(note string, done bool) error {
 
 	n.Note = note
+	n.Done = done
 	n.Updated_at = time.Now()
-	_, err := n.DB.Query("UPDATE "+TABLE+" SET note = ?, updated_at = ? WHERE id = ?", n.Note, n.Updated_at, n.ID)
+	_, err := n.DB.Query("UPDATE "+TABLE+" SET note = ?, done = ?, updated_at = ? WHERE id = ?", n.Note, n.Done, n.Updated_at, n.ID)
 
 	return err
 }

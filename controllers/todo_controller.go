@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
 	"github.com/moritzschramm/todo-demo-go/models"
 	"strconv"
 )
@@ -28,11 +29,13 @@ func (t *Todo) ShowAll(res http.ResponseWriter, req *http.Request, params httpro
 
 	notes, err := models.Notes(t.DB)
 	if err != nil {
+		log.Println(err)
 		http.Error(res, "Internal Server Error", 500)
 		return
 	}
 	notesJson, err := json.Marshal(notes)
 	if err != nil {
+		log.Println(err)
 		http.Error(res, "Internal Server Error", 500)
 		return
 	}
@@ -67,7 +70,11 @@ func (t *Todo) Edit(res http.ResponseWriter, req *http.Request, params httproute
 	if note != nil {
 		
 		text := req.FormValue("note")
-		note.Edit(text)
+		done := false
+		if req.FormValue("done") == "true" {
+			done = true
+		}
+		note.Edit(text, done)
 	}
 }
 
