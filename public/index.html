@@ -9,29 +9,41 @@
 <body>
 
 	<div class="columns is-centered">
-		<div class="column is-half">
+		<div class="column is-half" id="app">
 
 			<hr>
 
-			<h1 class="title">Current Todos:</h1>
+			<h1 class="title">Current Todos</h1>
 
 			<hr>
 
-			<div class="level">
+			<div class="level" v-for="(todo, index) in todos">
 				<div class="level-left">
 					<div class="level-item">
-						<label class="checkbox"><input type="checkbox"></label>
+						<label class="checkbox">
+							<input type="checkbox" 
+									v-bind:checked="todo.done"
+									v-on:click="toggleTodo(todo)">
+						</label>
 					</div>
 
 					<div class="leve-item">
-						<input class="input is-static is-medium" type="text" placeholder="Todo" value="First todo">
+						<input type="text" class="input is-medium" placeholder="Todo" 
+							v-bind:value="todo.note" 
+							v-on:click="todo.inEdit = true" 
+							v-bind:class="{'is-static': !todo.inEdit, 'line-through': todo.done}"
+							v-on:blur="editNote(todo)"
+							v-model.trim="todo.note">
 					</div>	
 				</div>	
 
 				<div class="level-right">
 
 					<div class="level-item">
-						<button class="button is-danger is-small"><span class="icon"><i class="mdi mdi-18px mdi-close"></i></span></button>
+						<button class="button is-danger is-small" 
+								v-on:click="deleteNote(todo,index)">
+								<span class="icon"><i class="mdi mdi-18px mdi-close"></i></span>
+						</button>
 					</div>
 				</div>
 
@@ -39,38 +51,20 @@
 
 			<div class="level">
 				<div class="level-left">
+
 					<div class="level-item">
-						<label class="checkbox"><input type="checkbox"></label>
+						<label class="checkbox"><input type="checkbox" disabled></label>
 					</div>
 
 					<div class="leve-item">
-						<input class="input is-static is-medium" type="text" placeholder="Todo" value="Second todo">
+						<input class="input is-medium" type="text" placeholder="New Todo" v-model.trim="text">
 					</div>	
 				</div>	
 
 				<div class="level-right">
 
 					<div class="level-item">
-						<button class="button is-danger is-small"><span class="icon"><i class="mdi mdi-18px mdi-close"></i></span></button>
-					</div>
-				</div>
-
-			</div>
-
-			<hr>
-
-			<div class="level">
-				<div class="level-left">
-
-					<div class="leve-item">
-						<input class="input is-medium" type="text" placeholder="New Todo">
-					</div>	
-				</div>	
-
-				<div class="level-right">
-
-					<div class="level-item">
-						<button class="button is-success is-medium">
+						<button class="button is-success is-medium" v-on:click="addNote">
 							<span class="icon">
 								<i class="mdi mdi-24px mdi-plus"></i>
 							</span>
