@@ -47,5 +47,6 @@ func main() {
     router.POST("/edit/todo/:id", 		todo.Edit)
     router.POST("/delete/todo/:id", 	todo.Delete)
 
-    log.Fatal(http.ListenAndServe(":8080", router))
+    log.Println("Starting server on http://localhost:8000")
+    log.Fatal(http.ListenAndServe(":8000", router))
 }
