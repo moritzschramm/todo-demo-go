@@ -6,6 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
     "net/http"
     "log"
+    "time"
     "github.com/moritzschramm/todo-demo-go/controllers"
 )
 
@@ -20,17 +21,27 @@ func Index(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 func main() {
 
 	// database connection setup
-	db, err := sql.Open("mysql", "homestead:secret@/homestead?parseTime=true")
+	db, err := sql.Open("mysql", "homestead:secret@(mysql)/homestead?parseTime=true")
 	if err != nil {
 		log.Fatal("Error connecting to DB: ", err.Error())
 		return
 	}
 	// check database connection
-	err = db.Ping()
+	for i := 0; i < 5; i++ {										// try connecting to database 5 times. 
+		err = db.Ping()												// this is needed when the mysql docker 
+		if err != nil {												// container first starts and is creating
+			log.Println("Error connecting to DB: ", err.Error())	// the database. 
+			log.Println("Trying to connect again in 5 seconds")
+		} else {
+			break
+		}
+		time.Sleep(5 * time.Second)									// wait for 5 seconds after each try
+	}
 	if err != nil {
-		log.Fatal("Error connecting to DB: ", err.Error())
+		log.Fatal("Could not connect to DB: ", err.Error())
 		return
 	}
+
 	defer db.Close()
 
 	// setup routes
