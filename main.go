@@ -22,13 +22,13 @@ func main() {
 	// database connection setup
 	db, err := sql.Open("mysql", "homestead:secret@/homestead?parseTime=true")
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatal("Error connecting to DB: ", err.Error())
 		return
 	}
 	// check database connection
 	err = db.Ping()
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatal("Error connecting to DB: ", err.Error())
 		return
 	}
 	defer db.Close()

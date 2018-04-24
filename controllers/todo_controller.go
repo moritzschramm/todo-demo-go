@@ -29,13 +29,13 @@ func (t *Todo) ShowAll(res http.ResponseWriter, req *http.Request, params httpro
 
 	notes, err := models.Notes(t.DB)
 	if err != nil {
-		log.Println(err)
+		log.Println("Error loading notes: ", err)
 		http.Error(res, "Internal Server Error", 500)
 		return
 	}
 	notesJson, err := json.Marshal(notes)
 	if err != nil {
-		log.Println(err)
+		log.Println("Error loading notes: ", err)
 		http.Error(res, "Internal Server Error", 500)
 		return
 	}
@@ -49,12 +49,14 @@ func (t *Todo) Create(res http.ResponseWriter, req *http.Request, params httprou
 	text := req.FormValue("note")
 	note, err := models.CreateNote(t.DB, text)
 	if err != nil {
+		log.Println("Error creating note: ", err)
 		http.Error(res, "Internal Server Error", 500)
 		return
 	}
 
 	noteJson, err := json.Marshal(note)
 	if err != nil {
+		log.Println("Error creating note: ", err)
 		http.Error(res, "Internal Server Error", 500)
 		return
 	}
@@ -93,11 +95,13 @@ func (t *Todo) getNoteById(res http.ResponseWriter, req *http.Request, params ht
 
 	id, err := strconv.Atoi(params.ByName("id"))
 	if err != nil {
+		log.Println("Error getting note by id: ", err)
 		http.NotFound(res, req)
 		return nil
 	}
 	note, err := models.FindNoteById(t.DB, id)
 	if err != nil {
+		log.Println("Error getting note by id: ", err)
 		http.NotFound(res, req)
 		return nil
 	}
