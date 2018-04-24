@@ -11,7 +11,27 @@ services:
     ports:
       - "3306:3306"
     volumes:
+      - ./db-init.sql:/docker-entrypoint-initdb.d/db-init.sql
       - ./data:/var/lib/mysql
+    networks:
+      - appnet
+
+  go: 
+    image: golang:1.10
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/go/src/github.com/moritzschramm/todo-demo-go
+    working_dir: /go/src/github.com/moritzschramm/todo-demo-go
+    command: sh run.sh
+    networks:
+      - appnet
+    links:
+      - mysql
+
+networks:
+  appnet:
+    driver: "bridge"
 
 volumes:
   data:
