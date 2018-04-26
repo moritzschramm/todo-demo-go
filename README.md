@@ -1,6 +1,6 @@
 # Todo Demo application
 
-Small web application written in Go
+Simple Todo web application written in Go and Vue.js
 
 ## Requirements
  - `docker` 
