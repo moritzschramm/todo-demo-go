@@ -62,10 +62,11 @@ func FindNoteById(db *sql.DB, id int) (*Note, error) {
 func CreateNote(db *sql.DB, note string) (*Note, error) {
 
 	created_at := time.Now();
-	_, err := db.Query("INSERT INTO "+TABLE+" (note, done, created_at, updated_at) VALUES (?, false, ?, ?)", note, created_at, created_at)
+	rows, err := db.Query("INSERT INTO "+TABLE+" (note, done, created_at, updated_at) VALUES (?, false, ?, ?)", note, created_at, created_at)
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	var id int
 	err = db.QueryRow("SELECT id FROM "+TABLE+" ORDER BY created_at DESC LIMIT 1").Scan(&id)
@@ -81,14 +82,17 @@ func (n *Note) Edit(note string, done bool) error {
 	n.Note = note
 	n.Done = done
 	n.Updated_at = time.Now()
-	_, err := n.DB.Query("UPDATE "+TABLE+" SET note = ?, done = ?, updated_at = ? WHERE id = ?", n.Note, n.Done, n.Updated_at, n.ID)
+	rows, err := n.DB.Query("UPDATE "+TABLE+" SET note = ?, done = ?, updated_at = ? WHERE id = ?", n.Note, n.Done, n.Updated_at, n.ID)
+	defer rows.Close()
 
 	return err
 }
 
 func (n *Note) Delete() error {
 
-	_, err := n.DB.Query("DELETE FROM "+TABLE+" WHERE id = ?", n.ID)
+	rows, err := n.DB.Query("DELETE FROM "+TABLE+" WHERE id = ?", n.ID)
+	defer rows.Close()
+
 	n = nil
 
 	return err
