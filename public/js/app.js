@@ -5,8 +5,7 @@ var app = new Vue({
     text: "",
     maxId: 99,
     loading: true,
-    orderSelection: "created_at",
-    noItemsText: ""
+    orderSelection: "created_at"
   },
   created: function() {
 

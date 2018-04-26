@@ -39,7 +39,7 @@
 
 			<transition-group name="todo-list" tag="div">
 
-			<div class="todo-list-item level" v-for="(todo, index) in todos" v-bind:key="todo.id">
+			<div class="todo-list-item level is-mobile" v-for="(todo, index) in todos" v-bind:key="todo.id">
 				<div class="level-left">
 					<div class="level-item">
 						<label class="checkbox">
@@ -73,7 +73,7 @@
 			</div>
 			
 
-			<div class="todo-list-item level" v-bind:key="maxId">
+			<div class="todo-list-item level is-mobile" v-bind:key="maxId">
 				<div class="level-left">
 
 					<div class="level-item">
