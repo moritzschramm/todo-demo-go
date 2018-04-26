@@ -13,11 +13,33 @@
 
 			<hr>
 
-			<h1 class="title">Current Todos</h1>
+			<div class="level">
+				<div class="level-left">
+					<div class="level-item">
+						<span class="title">Current Todos</span>
+					</div>
+				</div>
+				<div class="level-right">
+					<div class="level-item">
+						<span style="padding-right: 10px;">Order by: </span>
+						<div class="select" 
+								v-bind:class="{'is-loading': loading}">
+							<select v-model="orderSelection">
+								<option value="created_at">Date</option>
+								<option value="note">Name</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			
 
 			<hr>
 
-			<div class="level" v-for="(todo, index) in todos">
+
+			<transition-group name="todo-list" tag="div">
+
+			<div class="todo-list-item level" v-for="(todo, index) in todos" v-bind:key="todo.id">
 				<div class="level-left">
 					<div class="level-item">
 						<label class="checkbox">
@@ -27,12 +49,13 @@
 						</label>
 					</div>
 
-					<div class="leve-item">
-						<input type="text" class="input is-medium" placeholder="Todo" 
+					<div class="level-item">
+						<input type="text" class="input is-medium is-static" placeholder="Todo" 
 							v-bind:value="todo.note" 
-							v-on:click="todo.inEdit = true" 
-							v-bind:class="{'is-static': !todo.inEdit, 'line-through': todo.done}"
+							v-on:click="$event.target.focus()"
+							v-bind:class="{'line-through': todo.done}"
 							v-on:blur="editNote(todo)"
+							v-on:keydown.enter="editNote(todo); document.getElementById('note-input').focus();"
 							v-model.trim="todo.note">
 					</div>	
 				</div>	
@@ -48,8 +71,9 @@
 				</div>
 
 			</div>
+			
 
-			<div class="level">
+			<div class="todo-list-item level" v-bind:key="maxId">
 				<div class="level-left">
 
 					<div class="level-item">
@@ -57,7 +81,9 @@
 					</div>
 
 					<div class="leve-item">
-						<input class="input is-medium" type="text" placeholder="New Todo" v-model.trim="text">
+						<input id="note-input" class="input is-medium is-static" type="text" placeholder="New Todo" 
+							v-model.trim="text"
+							v-on:keydown.enter="addNote">
 					</div>	
 				</div>	
 
@@ -74,6 +100,8 @@
 				</div>
 
 			</div>
+
+			</transition-group>
 
 		</div>
 	</div>
