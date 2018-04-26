@@ -1,5 +1,6 @@
 .is-static {
 	margin-left: 11px;
+	background-color: transparent; 
 }
 .line-through {
 	text-decoration: line-through;
@@ -10,10 +11,13 @@
 }
 
 .todo-list-item {
-	transition: all 0.2s;
+	transition: all .2s;
 }
 
-.todo-list-enter, .todo-list-leave-to {
+.todo-list-enter {
+	opacity: 1;
+}
+.todo-list-leave-to {
  	opacity: 0;
  	transform: translateX(1rem);
 }
@@ -24,5 +28,5 @@
 	opacity: 0;
 }
 .todo-list-move {
-	transition: transform 0.2s;
+	transition: transform .2s;
 }

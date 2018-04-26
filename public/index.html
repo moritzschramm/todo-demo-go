@@ -11,97 +11,41 @@
 	<div class="columns is-centered">
 		<div class="column is-half" id="app">
 
-			<hr>
-
-			<div class="level">
-				<div class="level-left">
-					<div class="level-item">
-						<span class="title">Current Todos</span>
-					</div>
-				</div>
-				<div class="level-right">
-					<div class="level-item">
-						<span style="padding-right: 10px;">Order by: </span>
-						<div class="select" 
-								v-bind:class="{'is-loading': loading}">
-							<select v-model="orderSelection">
-								<option value="created_at">Date</option>
-								<option value="note">Name</option>
-							</select>
-						</div>
-					</div>
-				</div>
-			</div>
-			
-
-			<hr>
-
-
-			<transition-group name="todo-list" tag="div">
-
-			<div class="todo-list-item level is-mobile" v-for="(todo, index) in todos" v-bind:key="todo.id">
-				<div class="level-left">
-					<div class="level-item">
-						<label class="checkbox">
-							<input type="checkbox" 
-									v-bind:checked="todo.done"
-									v-on:click="toggleTodo(todo)">
-						</label>
-					</div>
-
-					<div class="level-item">
-						<input type="text" class="input is-medium is-static" placeholder="Todo" 
-							v-bind:value="todo.note" 
-							v-on:click="$event.target.focus()"
-							v-bind:class="{'line-through': todo.done}"
-							v-on:blur="editNote(todo)"
-							v-on:keydown.enter="editNote(todo); document.getElementById('note-input').focus();"
-							v-model.trim="todo.note">
-					</div>	
-				</div>	
-
-				<div class="level-right">
-
-					<div class="level-item">
-						<button class="button is-danger is-small" 
-								v-on:click="deleteNote(todo,index)">
-								<span class="icon"><i class="mdi mdi-18px mdi-close"></i></span>
-						</button>
-					</div>
-				</div>
-
-			</div>
-			
-
-			<div class="todo-list-item level is-mobile" v-bind:key="maxId">
-				<div class="level-left">
-
-					<div class="level-item">
-						<label class="checkbox"><input type="checkbox" disabled></label>
-					</div>
-
-					<div class="leve-item">
-						<input id="note-input" class="input is-medium is-static" type="text" placeholder="New Todo" 
-							v-model.trim="text"
-							v-on:keydown.enter="addNote">
-					</div>	
-				</div>	
-
-				<div class="level-right">
-
-					<div class="level-item">
-						<button class="button is-success is-medium" v-on:click="addNote">
-							<span class="icon">
-								<i class="mdi mdi-24px mdi-plus"></i>
-							</span>
-							<span>Create</span>
-						</button>
-					</div>
-				</div>
-
-			</div>
-
-			</transition-group>
+			<hr>                                                   
+            <div class="level">                                     
+                <div class="level-left">                            
+                    <div class="level-item">                        
+                        <span class="title">Current Todos</span>    
+                    </div>                                          
+                </div>                                              
+                <div class="level-right">                           
+                    <order-select                                   
+                        v-bind:loader="loading"                     
+                        v-model="orderSelection"                    
+                        v-on:order-changed="orderChanged">          
+                    </order-select>                                 
+                </div>                                              
+            </div>                                                  
+                                                                    
+            <hr>                                                    
+                                                                    
+            <transition-group name="todo-list" tag="div">           
+                                                                    
+            <todo v-for="(todo, index) in todos"                    
+                v-bind:key="todo.id"                                
+                v-bind:todo="todo"                                  
+                v-bind:index="index"                                
+                v-on:toggle="toggleTodo"                            
+                v-on:edit="editTodo"                                
+                v-on:delete="deleteTodo">                           
+            </todo>                                                 
+                                                                    
+            <create-todo-button                                     
+                v-bind:key="maxId"                                  
+                v-on:create-todo="addTodo">    	
+            </create-todo-button>                                  
+                                                                    
+            </transition-group>
 
 		</div>
 	</div>
