@@ -28,5 +28,5 @@
 	opacity: 0;
 }
 .todo-list-move {
-	transition: transform .2s;
+	transition: transform .15s;
 }
