@@ -1,6 +1,6 @@
 # Todo Demo application
 
-Simple Todo web application written in Go and Vue.js
+Simple Todo web application written in Go and Vue.js.
 Preview: (Front-end only): [moritz.schramm.com/todo-vuejs](https://moritz-schramm.com/todo-vuejs)
 
 ## Requirements
