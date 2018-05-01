@@ -2,6 +2,7 @@ package main
 
 import (
     "github.com/julienschmidt/httprouter"
+    "github.com/urfave/negroni"
     "database/sql"
     _ "github.com/go-sql-driver/mysql"
     "net/http"
@@ -10,12 +11,21 @@ import (
     "github.com/moritzschramm/todo-demo-go/controllers"
 )
 
-func Index(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 
+func Index(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+    http.ServeFile(res, req, "public/views/index.html")
+}
+
+func HeaderMiddleware(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
+  
     res.Header().Set("x-content-type-options", "nosniff")
     res.Header().Set("x-frame-options", "SAMEORIGIN")
     res.Header().Set("x-xss-protection", "1; mode=block")
-    http.ServeFile(res, req, "public/index.html")
+    next(res, req)
+}
+
+func NotFoundHandler (res http.ResponseWriter, req *http.Request) {
+    http.ServeFile(res, req, "public/views/404.html")
 }
 
 func main() {
@@ -44,12 +54,13 @@ func main() {
 
     defer db.Close()
 
-    // setup routes
+    // setup router
     router := httprouter.New()
+    router.NotFound = http.HandlerFunc(NotFoundHandler)
 
-    // static content
+    // static files
     router.GET("/", Index)
-    router.ServeFiles("/assets/*filepath", http.Dir("public"))
+    router.ServeFiles("/assets/*filepath", http.Dir("public/assets"))
 
     // api
     todo := &controllers.Todo{DB: db}
@@ -58,6 +69,12 @@ func main() {
     router.POST("/edit/todo/:id",       todo.Edit)
     router.POST("/delete/todo/:id",     todo.Delete)
 
+    n := negroni.New()
+    n.Use(negroni.NewLogger())
+    n.Use(negroni.NewRecovery())
+    n.Use(negroni.HandlerFunc(HeaderMiddleware))
+    n.UseHandler(router)
+
     log.Println("Starting server on http://localhost:8000")
-    log.Fatal(http.ListenAndServe(":8000", router))
+    log.Fatal(http.ListenAndServe(":8000", n))
 }

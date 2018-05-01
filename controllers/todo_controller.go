@@ -18,9 +18,6 @@ type Todo struct {
 func setHeaders(res http.ResponseWriter) {
 
     res.Header().Set("Content-Type", "application/json; charset=utf-8")
-    res.Header().Set("x-content-type-options", "nosniff")
-    res.Header().Set("x-frame-options", "SAMEORIGIN")
-    res.Header().Set("x-xss-protection", "1; mode=block")
 }
 
 func (t *Todo) ShowAll(res http.ResponseWriter, req *http.Request, params httprouter.Params) {
@@ -33,6 +30,7 @@ func (t *Todo) ShowAll(res http.ResponseWriter, req *http.Request, params httpro
         http.Error(res, "Internal Server Error", 500)
         return
     }
+    
     notesJson, err := json.Marshal(notes)
     if err != nil {
         log.Println("Error loading notes: ", err)
@@ -77,6 +75,10 @@ func (t *Todo) Edit(res http.ResponseWriter, req *http.Request, params httproute
             done = true
         }
         note.Edit(text, done)
+
+        res.WriteHeader(http.StatusOK)
+    } else {
+        res.WriteHeader(http.StatusNotFound)
     }
 }
 
@@ -88,6 +90,9 @@ func (t *Todo) Delete(res http.ResponseWriter, req *http.Request, params httprou
 
     if note != nil {
         note.Delete()
+        res.WriteHeader(http.StatusOK)
+    } else {
+        res.WriteHeader(http.StatusNotFound)
     }
 }
 
