@@ -1,5 +1,12 @@
 package controllers
 
+/**
+  * todo_controller.go:
+  * - JSON API to show all, create, edit and delete notes
+  * - requires database connection (see struct)
+  * - logs errors via log and returns http error (status code 500)
+  */
+
 import (
     "net/http"
     "github.com/julienschmidt/httprouter"
@@ -15,11 +22,17 @@ type Todo struct {
     DB *sql.DB
 }
 
+/**
+  * set content type header in response
+  */
 func setHeaders(res http.ResponseWriter) {
 
     res.Header().Set("Content-Type", "application/json; charset=utf-8")
 }
 
+/**
+  * return json array of all saved notes
+  */
 func (t *Todo) ShowAll(res http.ResponseWriter, req *http.Request, params httprouter.Params) {
 
     setHeaders(res)
@@ -40,6 +53,9 @@ func (t *Todo) ShowAll(res http.ResponseWriter, req *http.Request, params httpro
     fmt.Fprint(res, string(notesJson))
 }
 
+/**
+  * create note, return json representation of note (with new id)
+  */
 func (t *Todo) Create(res http.ResponseWriter, req *http.Request, params httprouter.Params) {
 
     setHeaders(res)
@@ -62,6 +78,9 @@ func (t *Todo) Create(res http.ResponseWriter, req *http.Request, params httprou
     fmt.Fprint(res, string(noteJson))
 }
 
+/**
+  * try to update note, reutrn OK if found and updated, not found otherwise
+  */
 func (t *Todo) Edit(res http.ResponseWriter, req *http.Request, params httprouter.Params) {
 
     setHeaders(res)
@@ -82,6 +101,9 @@ func (t *Todo) Edit(res http.ResponseWriter, req *http.Request, params httproute
     }
 }
 
+/**
+  * delete note if it exists, return not found otherwise
+  */
 func (t *Todo) Delete(res http.ResponseWriter, req *http.Request, params httprouter.Params) {
 
     setHeaders(res)
@@ -96,6 +118,9 @@ func (t *Todo) Delete(res http.ResponseWriter, req *http.Request, params httprou
     }
 }
 
+/**
+  * try to find note by id and return it, return not found otherwise
+  */
 func (t *Todo) getNoteById(res http.ResponseWriter, req *http.Request, params httprouter.Params) *models.Note {
 
     id, err := strconv.Atoi(params.ByName("id"))

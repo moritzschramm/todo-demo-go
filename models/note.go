@@ -1,5 +1,13 @@
 package models
 
+/**
+  * note.go:
+  * - model representation of a note (stores text, done flag, creation and update time as well as unique id)
+  * - note can be easily formatted to JSON via json.Marshal(note)
+  * - requires database connection
+  * - methods to fetch all, find one, create, edit and delete note(s)
+  */
+
 import (
     "database/sql"
     "time"
@@ -7,11 +15,11 @@ import (
 
 const (
     TABLE = "notes"
-    SQL_FALSE = "\x00"
+    SQL_FALSE = "\x00"  // how the mysql implementation represents "false"...
 )
 
 type Note struct {
-    DB *sql.DB              `json:"-"`
+    DB *sql.DB              `json:"-"`      // ignore in json representation
     ID int                  `json:"id"`
     Note string             `json:"note"`
     Done bool               `json:"done"`
@@ -19,6 +27,9 @@ type Note struct {
     Updated_at time.Time    `json:"updated_at,omitempty"`
 }
 
+/**
+  * select all notes from database and return slice of notes
+  */
 func Notes(db *sql.DB) ([]*Note, error) {
 
     rows, err := db.Query("SELECT id, note, done, created_at, updated_at FROM "+TABLE)
@@ -46,6 +57,9 @@ func Notes(db *sql.DB) ([]*Note, error) {
     return notes[:i], nil
 }
 
+/**
+  * query database to find note by id and return note object
+  */
 func FindNoteById(db *sql.DB, id int) (*Note, error) {
 
     var note string
@@ -59,6 +73,9 @@ func FindNoteById(db *sql.DB, id int) (*Note, error) {
     return &Note{DB: db, ID: id, Note: note, Done: done != SQL_FALSE, Created_at: created_at, Updated_at: updated_at}, nil
 }
 
+/**
+  * insert note into database and return note object with id
+  */
 func CreateNote(db *sql.DB, note string) (*Note, error) {
 
     created_at := time.Now();
@@ -77,6 +94,9 @@ func CreateNote(db *sql.DB, note string) (*Note, error) {
     return &Note{DB: db, ID: id, Note: note, Done: false, Created_at: created_at, Updated_at: created_at}, nil
 }
 
+/**
+  * update note in database
+  */
 func (n *Note) Edit(note string, done bool) error {
 
     n.Note = note
@@ -88,6 +108,9 @@ func (n *Note) Edit(note string, done bool) error {
     return err
 }
 
+/**
+  * delete note from database
+  */
 func (n *Note) Delete() error {
 
     rows, err := n.DB.Query("DELETE FROM "+TABLE+" WHERE id = ?", n.ID)

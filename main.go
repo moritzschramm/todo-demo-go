@@ -1,5 +1,13 @@
 package main
 
+/**
+  * main.go:
+  * - database connection setup
+  * - router and middleware setup
+  * - server setup
+  * - Index handler, Not found handler, Header middleware
+  */
+
 import (
     "github.com/julienschmidt/httprouter"
     "github.com/urfave/negroni"
@@ -12,10 +20,16 @@ import (
 )
 
 
+/**
+  * returns html index file
+  */
 func Index(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {
     http.ServeFile(res, req, "public/views/index.html")
 }
 
+/**
+  * headers which will be sent on every response
+  */
 func HeaderMiddleware(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
   
     res.Header().Set("x-content-type-options", "nosniff")
@@ -28,6 +42,11 @@ func NotFoundHandler (res http.ResponseWriter, req *http.Request) {
     http.ServeFile(res, req, "public/views/404.html")
 }
 
+/**
+  * open database connection
+  * setup routes and logging middleware
+  * start server (listen on localhost:8000)
+  */
 func main() {
 
     // database connection setup
