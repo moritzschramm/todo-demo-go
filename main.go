@@ -24,7 +24,7 @@ import (
   * returns html index file
   */
 func Index(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {
-    http.ServeFile(res, req, "public/views/index.html")
+    http.ServeFile(res, req, "frontend/index.html")
 }
 
 /**
@@ -39,7 +39,7 @@ func HeaderMiddleware(res http.ResponseWriter, req *http.Request, next http.Hand
 }
 
 func NotFoundHandler (res http.ResponseWriter, req *http.Request) {
-    http.ServeFile(res, req, "public/views/404.html")
+    http.ServeFile(res, req, "frontend/404.html")
 }
 
 /**
@@ -79,7 +79,7 @@ func main() {
 
     // static files
     router.GET("/", Index)
-    router.ServeFiles("/assets/*filepath", http.Dir("public/assets"))
+    router.ServeFiles("/dist/*filepath", http.Dir("frontend/dist"))
 
     // api
     todo := &controllers.Todo{DB: db}
