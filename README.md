@@ -6,6 +6,7 @@ Preview: (Front-end only): [moritz.schramm.com/todo-vuejs](https://moritz-schram
 ## Requirements
  - `docker` 
  - `docker-compose`
+ - (`npm` with `vue` in case you want to edit the Vue components; a build version is at `/frontend/dist`) 
 
 ## Usage
 ```
