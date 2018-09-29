@@ -21,20 +21,20 @@
       <hr>
 
       <transition-group name="todo-list" tag="div">       
-                 
-      <todo v-for="(todo, index) in todos"
-          v-bind:key="todo.id"
-          v-bind:todo="todo"
-          v-bind:index="index"
-          v-on:toggle="toggleTodo"
-          v-on:edit="editTodo"
-          v-on:delete="deleteTodo">
-      </todo>
+                   
+        <todo v-for="(todo, index) in todos"
+            v-bind:key="todo.id"
+            v-bind:todo="todo"
+            v-bind:index="index"
+            v-on:toggle="toggleTodo"
+            v-on:edit="editTodo"
+            v-on:delete="deleteTodo">
+        </todo>
 
-      <create-todo-button
-          v-bind:key="maxId"
-          v-on:create-todo="addTodo">
-      </create-todo-button>
+        <create-todo-button
+            v-bind:key="createTodoKey"
+            v-on:create-todo="addTodo">
+        </create-todo-button>
 
       </transition-group>
 
@@ -52,7 +52,7 @@ export default {
   data () {
     return {
       todos: [],
-      maxId: 99,
+      createTodoKey: "create_button",
       loading: true,
       orderSelection: "created_at"
     }
@@ -64,14 +64,19 @@ export default {
     var xhttp = new XMLHttpRequest();
     xhttp.open("POST", "/todos", true);
     xhttp.onreadystatechange = function(vm) {
+
         if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
             
             var todos = JSON.parse(this.responseText);
             todos.forEach(function(todo) {
-                vm.todos.push({id: todo.id, note: todo.note, done: todo.done, created_at: todo.created_at, updated_at: todo.updated_at});
-                if(todo.id >= vm.maxId) {
-                    vm.maxId = todo.id + 1;
-                }
+                vm.todos.push(
+                  {
+                    id: todo.id, 
+                    note: todo.note, 
+                    done: todo.done, 
+                    created_at: todo.created_at, 
+                    updated_at: todo.updated_at
+                  });
             });
             vm.loading = false;
         }
@@ -89,19 +94,8 @@ export default {
         this.sortTodos();
         document.getElementById('note-input').focus();
     },
-    sortTodos () {
-
-        var order = this.orderSelection;
-        this.todos.sort(function(a, b) {
-            if(a[order] < b[order]) {
-                return -1;
-            } else if (a[order] > b[order]) {
-                return 1;
-            }
-            return 0;
-        });
-    },
     addTodo (text) {
+
         if(text !== "") {
 
             this.loading = true;
@@ -113,11 +107,15 @@ export default {
             if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
                     
                     var todo = JSON.parse(this.responseText);
-                    vm.todos.push({id: todo.id, note: todo.note, done: todo.done, created_at: todo.created_at, updated_at: todo.updated_at});
+                    vm.todos.push(
+                      {
+                        id: todo.id, 
+                        note: todo.note, 
+                        done: todo.done, 
+                        created_at: todo.created_at, 
+                        updated_at: todo.updated_at
+                      });
                     vm.sortTodos();
-                    if(todo.id >= vm.maxId) {
-                        vm.maxId = todo.id + 1;
-                    }
                     vm.loading = false;
                 }
             }.bind(xhttp, this);
@@ -152,7 +150,19 @@ export default {
     }, 
     encodeTodo (todo) {
 
-        return "note="+todo.note+"&done="+todo.done;
+        return "note="+encodeURIComponent(todo.note)+"&done="+encodeURIComponent(todo.done);
+    },
+    sortTodos () {
+
+        var order = this.orderSelection;
+        this.todos.sort(function(a, b) {
+            if(a[order] < b[order]) {
+                return -1;
+            } else if (a[order] > b[order]) {
+                return 1;
+            }
+            return 0;
+        });
     }
   },
   components: {
@@ -196,6 +206,6 @@ export default {
   opacity: 0;
 }
 .todo-list-move {
-  transition: transform .15s;
+  transition: transform .1s;  /* how fast the items are moving, e.g. when they are removed from the list */
 }
 </style>
